@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 
 // --- SHARED COMPONENTS ---
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import SectionPreview from '../components/SectionPreview';
 
 // --- HOMEPAGE SECTIONS ---
@@ -27,11 +25,10 @@ export default function HomePage() {
 
   return (
     <>
-      <Header />
       <main>
         {/* The new, innovative 3D hero is the first thing users see */}
         <Hero />
-        
+
         {/* All the other sections follow in a logical, scrolling order */}
         <FoundryPulse />
         <ValueProposition />

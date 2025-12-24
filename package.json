@@ -1,0 +1,22 @@
+{
+    "name": "enclope",
+    "version": "1.0.0",
+    "description": "Enclope - Full Stack Application",
+    "scripts": {
+        "start": "npm run start:all",
+        "start:all": "npm run start:server & npm run start:client",
+        "start:server": "cd server && npm run dev",
+        "start:client": "cd client && npm run dev",
+        "install:all": "npm run install:server && npm run install:client",
+        "install:server": "cd server && npm install",
+        "install:client": "cd client && npm install"
+    },
+    "keywords": [
+        "enclope",
+        "react",
+        "express",
+        "mongodb"
+    ],
+    "author": "",
+    "license": "ISC"
+}
