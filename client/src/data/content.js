@@ -1,27 +1,45 @@
 export const services = [
     { 
-      id: 'saas', 
-      title: 'SaaS Engine', 
-      desc: 'We build robust, scalable, and user-friendly Software-as-a-Service platforms from the ground up, focusing on agile development and modern architecture.',
-      icon: '⚙️' // Gear icon
+      id: 'saas-website', 
+      title: 'SaaS Website Development', 
+      desc: 'We build robust, scalable, and user-friendly SaaS websites from the ground up. Our student-led teams create modern, responsive platforms with cutting-edge technologies that drive user engagement and business growth.',
+      icon: 'Globe'
     },
     { 
-      id: 'marketing', 
-      title: 'Marketing Amplifier', 
-      desc: 'Our teams devise and execute data-driven digital marketing strategies. From SEO and SMM to content creation, we amplify your brand’s voice.',
-      icon: '📈' // Chart icon
+      id: 'app-development', 
+      title: 'App Development', 
+      desc: 'From concept to deployment, we develop engaging mobile and web applications for iOS, Android, and cross-platform solutions. Our agile approach ensures seamless user experiences that captivate audiences.',
+      icon: 'Smartphone'
     },
     { 
-      id: 'design', 
-      title: 'Design Calibrator', 
-      desc: 'We craft intuitive and beautiful user interfaces (UI) and user experiences (UX) that are not only visually stunning but also a joy to use.',
-      icon: '🎨' // Palette icon
+      id: 'seo', 
+      title: 'SEO Optimization', 
+      desc: 'Boost your online visibility with our comprehensive SEO strategies. We optimize your website content, technical infrastructure, and backlink profiles to improve search engine rankings and drive organic traffic.',
+      icon: 'Search'
     },
-     { 
-      id: 'mobile', 
-      title: 'Mobile Lab', 
-      desc: 'From concept to prototype, we build engaging mobile applications for iOS and Android, focusing on a seamless mobile-first experience.',
-      icon: '📱' // Phone icon
+    { 
+      id: 'geo-targeting', 
+      title: 'Geo-Targeting', 
+      desc: 'Reach the right audience at the right location with our geo-targeting solutions. We implement location-based marketing strategies, geofencing, and local SEO to connect you with customers in your target markets.',
+      icon: 'MapPin'
+    },
+    { 
+      id: 'smm', 
+      title: 'Social Media Marketing', 
+      desc: 'Amplify your brand\'s voice across all social platforms. Our teams create compelling content strategies, manage social media campaigns, and engage with your audience to build a strong online presence.',
+      icon: 'Megaphone'
+    },
+    { 
+      id: 'email-campaigns', 
+      title: 'Email Campaigns', 
+      desc: 'Drive conversions with data-driven email marketing campaigns. We design engaging newsletters, automate workflows, and optimize deliverability to nurture leads and retain customers effectively.',
+      icon: 'Mail'
+    },
+    { 
+      id: 'whatsapp-campaigns', 
+      title: 'WhatsApp Campaigns', 
+      desc: 'Engage customers directly through WhatsApp Business campaigns. We craft personalized messages, automate customer support, and run targeted marketing campaigns to connect with your audience instantly.',
+      icon: 'MessageCircle'
     }
 ];
 export const projects = [
