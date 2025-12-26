@@ -87,9 +87,26 @@ function ParticleSphere() {
         velocities.current = new Float32Array(count * 3).fill(0);
     }, [count]);
 
+    // Grow animation state
+    const growProgress = useRef(0);
+    const isGrowing = useRef(true);
+
     // Animation loop with Antimatter-style RAY-TO-POINT distance repulsion
     useFrame((state) => {
         if (!pointsRef.current || !velocities.current) return;
+
+        // Grow animation on load (scale from 0 to 1)
+        if (isGrowing.current) {
+            growProgress.current += 0.02; // Animation speed
+            if (growProgress.current >= 1) {
+                growProgress.current = 1;
+                isGrowing.current = false;
+            }
+            // EaseOutExpo for smooth grow effect
+            const t = growProgress.current;
+            const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            pointsRef.current.scale.setScalar(eased);
+        }
 
         // Slow rotation of the whole group
         pointsRef.current.rotation.y += 0.001;
