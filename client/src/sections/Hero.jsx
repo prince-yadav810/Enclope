@@ -4,25 +4,39 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 
-// --- Improved Particle Sphere with Smooth Physics ---
+// --- Antimatter-Style Particle Sphere with Ray-to-Point Distance ---
+// Key insight: Calculate distance from each particle to the MOUSE RAY (infinite line),
+// not to a single point. This is why it works everywhere on the sphere.
 function ParticleSphere() {
     const pointsRef = useRef();
-    const { mouse, viewport } = useThree();
+    const { mouse, camera } = useThree();
+
+    // Store velocities for smoother physics-based movement
+    const velocities = useRef(null);
+
+    // Raycaster for mouse ray
+    const raycaster = useMemo(() => new THREE.Raycaster(), []);
+    const sphereRadius = 1.6;
+
+    // Reusable vectors to avoid garbage collection
+    const tempVec = useMemo(() => new THREE.Vector3(), []);
+    const particleWorldPos = useMemo(() => new THREE.Vector3(), []);
+    const vectorToParticle = useMemo(() => new THREE.Vector3(), []);
+    const closestPointOnRay = useMemo(() => new THREE.Vector3(), []);
 
     // Initialize particle data
     const { positions, originalPositions, colors, count } = useMemo(() => {
-        const count = 2000; // Slightly fewer particles for cleaner look
+        const count = 2500;
         const positions = new Float32Array(count * 3);
         const originalPositions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
 
         for (let i = 0; i < count; i++) {
-            // Fibonacci sphere distribution
+            // Fibonacci sphere distribution for even coverage
             const phi = Math.acos(1 - 2 * (i + 0.5) / count);
             const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
 
-            // Smaller radius as requested (1.6 instead of 2.2)
-            const radius = 1.6 + (Math.random() - 0.5) * 0.1;
+            const radius = sphereRadius + (Math.random() - 0.5) * 0.08;
 
             const x = radius * Math.sin(phi) * Math.cos(theta);
             const y = radius * Math.sin(phi) * Math.sin(theta);
@@ -36,85 +50,136 @@ function ParticleSphere() {
             originalPositions[i * 3 + 1] = y;
             originalPositions[i * 3 + 2] = z;
 
-            // Blue/Purple Colors
-            const t = Math.random();
-            colors[i * 3] = 0.3 + t * 0.1;     // R
-            colors[i * 3 + 1] = 0.3 + t * 0.1; // G
-            colors[i * 3 + 2] = 0.9 + t * 0.1; // B
+            // === DIRECTIONAL LIGHTING FROM TOP-LEFT ===
+            // Light source direction (normalized) - coming from top-left corner
+            const lightDirX = -0.6;  // from left
+            const lightDirY = 0.7;   // from top
+            const lightDirZ = 0.4;   // slightly from front
+
+            // Normalize particle position to get surface normal
+            const len = Math.sqrt(x * x + y * y + z * z);
+            const nx = x / len;
+            const ny = y / len;
+            const nz = z / len;
+
+            // Dot product: how much the particle faces the light (1 = facing, -1 = away)
+            const dot = nx * lightDirX + ny * lightDirY + nz * lightDirZ;
+
+            // Remap dot product to lighting factor (0 to 1)
+            // Particles facing light = bright, particles away = dim
+            const lightFactor = Math.max(0, dot) * 0.7 + 0.3; // 0.3 is ambient light
+
+            // Add some randomness
+            const t = Math.random() * 0.15;
+
+            // Color: purple/blue gradient with lighting applied
+            // Lit side: brighter purple-white, dark side: deeper blue
+            colors[i * 3] = (0.4 + t) * lightFactor + 0.1;     // R - more red = more purple on lit side
+            colors[i * 3 + 1] = (0.2 + t) * lightFactor;       // G
+            colors[i * 3 + 2] = (0.7 + t) * lightFactor + 0.2; // B - always some blue
         }
 
         return { positions, originalPositions, colors, count };
     }, []);
 
-    // Smooth animation loop
+    // Initialize velocities
+    useEffect(() => {
+        velocities.current = new Float32Array(count * 3).fill(0);
+    }, [count]);
+
+    // Animation loop with Antimatter-style RAY-TO-POINT distance repulsion
     useFrame((state) => {
-        if (!pointsRef.current) return;
+        if (!pointsRef.current || !velocities.current) return;
 
         // Slow rotation of the whole group
-        pointsRef.current.rotation.y += 0.002;
-        pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+        pointsRef.current.rotation.y += 0.001;
+        pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.15) * 0.05;
 
         const positionsArray = pointsRef.current.geometry.attributes.position.array;
+        const vels = velocities.current;
 
-        // Convert normalized mouse coordinates (-1 to 1) to world units roughly
-        // Viewport width at z=0 is approx viewport.width
-        // We need to account for the camera Z position (6) vs particle Z approx (0)
-        const mouseX = (mouse.x * viewport.width) / 2;
-        const mouseY = (mouse.y * viewport.height) / 2;
+        // Get the world matrix for transforming particle positions
+        pointsRef.current.updateMatrixWorld();
+        const worldMatrix = pointsRef.current.matrixWorld;
+
+        // Create a ray from camera through mouse position
+        raycaster.setFromCamera(mouse, camera);
+        const rayOrigin = raycaster.ray.origin;
+        const rayDir = raycaster.ray.direction;
+
+        // Interaction parameters - Antimatter style
+        const interactionRadius = 0.2; // Tight cursor-sized repulsion
+        const repulsionStrength = 4.5; // Strong force like Antimatter
+        const returnSpeed = 0.06;
+        const velocityDamping = 0.88;
 
         for (let i = 0; i < count; i++) {
             const idx = i * 3;
-
-            // Get current world position of the point (simplified, ignoring rotation for interaction check to keep it stable)
-            // Ideally we transform original pos by rotation, but for a "cloud" effect, 
-            // checking against original or current world pos is key.
-
-            // Let's use the actual current positions for interaction
-            // We need to rotate the mouse position into the local space OR rotate the point to world?
-            // Simpler approach for stable interaction: Calculate interaction based on Screen Space projection
-            // But here we'll stick to 3D distance for performance.
 
             // Current particle position (local space)
             const px = positionsArray[idx];
             const py = positionsArray[idx + 1];
             const pz = positionsArray[idx + 2];
 
-            // Original position (local space target)
+            // Original position (target to return to)
             const ox = originalPositions[idx];
             const oy = originalPositions[idx + 1];
             const oz = originalPositions[idx + 2];
 
-            // Calculate world position approximation for mouse check
-            // (Since we rotate the whole group, we need to account for that, 
-            // OR we can just check distance in 2D 'glass' plane for specific effect)
+            // Transform particle to world space
+            particleWorldPos.set(px, py, pz);
+            particleWorldPos.applyMatrix4(worldMatrix);
 
-            // Let's do a Local Space mouse check by rotating mouse inversely? 
-            // Actually, simple distance check often feels best if sphere doesn't rotate too fast.
+            // === KEY ANTIMATTER TECHNIQUE ===
+            // Calculate the closest point on the ray to this particle
+            // This is the projection of the particle onto the infinite ray line
 
-            // Vector from mouse to particle
-            const dx = px - mouseX; // Approximation
-            const dy = py - mouseY;
-            const distSq = dx * dx + dy * dy;
-            const dist = Math.sqrt(distSq);
+            // Vector from ray origin to particle
+            vectorToParticle.subVectors(particleWorldPos, rayOrigin);
 
-            // Interaction Radius
-            const radius = 1.2;
+            // Project this vector onto the ray direction to find t (distance along ray)
+            const t = vectorToParticle.dot(rayDir);
 
-            if (dist < radius) {
-                // Repulsion Force
-                const force = (1 - dist / radius) * 0.15; // Smooth force
-                const angle = Math.atan2(dy, dx);
+            // The closest point on the ray to the particle
+            closestPointOnRay.copy(rayDir).multiplyScalar(t).add(rayOrigin);
 
-                // Push particle away
-                positionsArray[idx] += Math.cos(angle) * force;
-                positionsArray[idx + 1] += Math.sin(angle) * force;
+            // Distance from particle to the closest point on the ray
+            const distToRay = particleWorldPos.distanceTo(closestPointOnRay);
+
+            // Apply repulsion if particle is close to the ray
+            if (distToRay < interactionRadius && distToRay > 0.0001) {
+                // Force falls off linearly with distance
+                const forceFactor = 1 - (distToRay / interactionRadius);
+                const forceStrength = repulsionStrength * forceFactor * 0.01; // Scale down for smooth movement
+
+                // Direction: push particle away from the closest point on ray
+                // We need to calculate this in LOCAL space for velocity updates
+                tempVec.subVectors(particleWorldPos, closestPointOnRay);
+                if (tempVec.length() > 0.0001) {
+                    tempVec.normalize();
+
+                    // Apply force in local space (approximate by using world direction)
+                    // This works because the sphere rotation is minimal
+                    vels[idx] += tempVec.x * forceStrength;
+                    vels[idx + 1] += tempVec.y * forceStrength;
+                    vels[idx + 2] += tempVec.z * forceStrength;
+                }
             }
 
-            // Return to original position (Lerp for smooth damping)
-            // This eliminates the "springy jitter" and gives a fluid viscosity
-            positionsArray[idx] += (ox - px) * 0.05; // 0.05 = eased return speed
-            positionsArray[idx + 1] += (oy - py) * 0.05;
-            positionsArray[idx + 2] += (oz - pz) * 0.05;
+            // Spring force to return to original position
+            vels[idx] += (ox - px) * returnSpeed;
+            vels[idx + 1] += (oy - py) * returnSpeed;
+            vels[idx + 2] += (oz - pz) * returnSpeed;
+
+            // Apply velocity damping
+            vels[idx] *= velocityDamping;
+            vels[idx + 1] *= velocityDamping;
+            vels[idx + 2] *= velocityDamping;
+
+            // Update positions
+            positionsArray[idx] += vels[idx];
+            positionsArray[idx + 1] += vels[idx + 1];
+            positionsArray[idx + 2] += vels[idx + 2];
         }
 
         pointsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -223,7 +288,7 @@ function StatCounter({ value, label, delay }) {
     return (
         <div className="stat-item">
             <span className="stat-value">{count}</span>
-            <span className="stat-label">{label}</span>
+            <span className="stat-label" dangerouslySetInnerHTML={{ __html: label }} />
         </div>
     )
 }
@@ -231,7 +296,9 @@ function StatCounter({ value, label, delay }) {
 export default function Hero() {
     return (
         <section className="hero-section">
+            <div className="hero-light-ray"></div>
             <div className="hero-glow"></div>
+            <div className="hero-watermark-tagline">WELCOME TO THE FOUNDRY</div>
             <div className="hero-watermark">ENCLOPE</div>
 
             <div className="hero-canvas-container">
@@ -241,10 +308,8 @@ export default function Hero() {
                     <AmbientParticles />
                 </Canvas>
             </div>
-
-            <div className="hero-content">
-                <p className="hero-tagline">Welcome to the Foundry</p>
-                <AnimatedText />
+            {/* Bottom left: Text + CTA */}
+            <div className="hero-bottom-left">
                 <p className="hero-description">
                     We shape the next generation of builders by creating exceptional digital solutions.
                 </p>
@@ -254,10 +319,16 @@ export default function Hero() {
                 </Link>
             </div>
 
+            {/* Center: Animated headline */}
+            <div className="hero-content">
+                <AnimatedText />
+            </div>
+
+            {/* Bottom right: Stats */}
             <div className="hero-stats">
-                <StatCounter value="47" label="Active Contributors" delay={0} />
-                <StatCounter value="15" label="Ideas in The Crucible" delay={200} />
-                <StatCounter value="8" label="Projects in The Forge" delay={400} />
+                <StatCounter value="47" label="Active<br/>Contributors" delay={0} />
+                <StatCounter value="15" label="Ideas in<br/>The Crucible" delay={200} />
+                <StatCounter value="8" label="Projects in<br/>The Forge" delay={400} />
             </div>
         </section>
     );

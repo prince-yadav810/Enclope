@@ -259,23 +259,105 @@ h6 {
   align-items: center;
 }
 
-/* Radial Gradient Glow Behind Sphere */
+/* Purple Radial Glow Behind Sphere - Antimatter Style */
 .hero-glow {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 800px;
-  height: 800px;
+  width: 700px;
+  height: 700px;
   background: radial-gradient(circle,
-      rgba(8, 8, 12, 0.8) 0%,
-      rgba(26, 26, 26, 0.4) 30%,
+      rgba(139, 92, 246, 0.25) 0%,
+      rgba(124, 58, 237, 0.15) 25%,
+      rgba(79, 70, 229, 0.08) 50%,
       rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(40px);
+}
+
+/* Purple Light Ray from Top-Left Corner - Antimatter Style */
+.hero-light-ray {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg,
+      rgba(139, 92, 246, 0.3) 0%,
+      rgba(124, 58, 237, 0.2) 15%,
+      rgba(79, 70, 229, 0.1) 30%,
+      transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Watermark Background */
+/* Secondary ray for more depth */
+.hero-light-ray::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse at 0% 0%,
+      rgba(139, 92, 246, 0.4) 0%,
+      rgba(124, 58, 237, 0.25) 20%,
+      rgba(79, 70, 229, 0.15) 40%,
+      transparent 70%);
+  filter: blur(40px);
+}
+
+/* Narrow beam streak */
+.hero-light-ray::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150%;
+  height: 3px;
+  background: linear-gradient(90deg,
+      rgba(167, 139, 250, 0.8) 0%,
+      rgba(139, 92, 246, 0.5) 30%,
+      transparent 70%);
+  transform: rotate(35deg);
+  transform-origin: 0% 0%;
+  filter: blur(8px);
+  animation: ray-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes ray-shimmer {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Watermark Tagline - Above Sphere */
+.hero-watermark-tagline {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(25px, 5vw, 88px);
+  font-weight: 400;
+  color: #3a3a4a;
+  opacity: 0.3;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+/* Watermark Background - ENCLOPE */
 .hero-watermark {
   position: absolute;
   top: 50%;
@@ -284,8 +366,8 @@ h6 {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(100px, 20vw, 350px);
   font-weight: 400;
-  color: #1a1a1a;
-  opacity: 0.5;
+  color: #3a3a4a;
+  opacity: 0.3;
   white-space: nowrap;
   pointer-events: none;
   z-index: 0;
@@ -313,6 +395,13 @@ h6 {
   text-align: center;
   padding: 0 24px;
   max-width: 900px;
+  pointer-events: none;
+  /* Allow mouse events to pass through to canvas */
+}
+
+/* Re-enable pointer events on interactive elements */
+.hero-cta {
+  pointer-events: auto;
 }
 
 .hero-tagline {
@@ -402,24 +491,41 @@ h6 {
   transform: translate(3px, -3px);
 }
 
+/* Bottom Left - Description + CTA Button */
+.hero-bottom-left {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  z-index: 10;
+  max-width: 400px;
+}
+
+.hero-bottom-left .hero-description {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(13px, 1.5vw, 15px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
 /* Stats Bar */
 .hero-stats {
   position: absolute;
   bottom: 40px;
-  left: 0;
-  right: 0;
+  right: 40px;
   z-index: 10;
   display: flex;
-  justify-content: center;
-  gap: clamp(30px, 8vw, 100px);
-  padding: 0 24px;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: clamp(24px, 4vw, 48px);
 }
 
 .stat-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
 }
 
 .stat-value {
@@ -432,12 +538,14 @@ h6 {
 
 .stat-label {
   font-family: 'Sora', sans-serif;
-  font-size: clamp(10px, 1.5vw, 13px);
+  font-size: clamp(13px, 1.4vw, 15px);
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-  max-width: 100px;
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Mobile Responsive */
