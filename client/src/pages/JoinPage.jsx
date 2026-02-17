@@ -7,7 +7,6 @@ import {
   Phone, Smartphone, Monitor, Cpu, MapPin, Loader2
 } from 'lucide-react';
 
-import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../components/ui/Toast';
 import { submitStudentApplication, submitClientBrief } from '../lib/api';
@@ -224,10 +223,6 @@ export default function JoinUs() {
         </AnimatePresence>
       </div>
 
-      {/* Footer will now sit naturally at the bottom */}
-      <div className="relative z-10">
-        <Footer />
-      </div>
     </div>
   );
 }
