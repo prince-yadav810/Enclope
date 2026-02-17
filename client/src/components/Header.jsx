@@ -40,8 +40,8 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full p-4 md:p-6 z-50">
-        <nav className={`container mx-auto flex justify-between items-center bg-base/50 backdrop-blur-md p-4 rounded-xl border transition-all duration-300 ${isScrolled ? 'border-border' : 'border-transparent'}`}>
+      <header className="fixed top-0 left-0 w-full p-2 md:p-6 z-50">
+        <nav className={`container mx-auto flex justify-between items-center bg-base/50 backdrop-blur-md p-3 md:p-4 rounded-xl border transition-all duration-300 ${isScrolled ? 'border-border' : 'border-transparent'}`}>
 
           {/* Logo */}
           <Link to="/" onClick={handleNavClick} className="text-3xl font-heading tracking-wider">

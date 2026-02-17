@@ -202,7 +202,7 @@ export default function Forge({ showTitle = true }) {
 
       {/* Blueprint Grid Background */}
       <div
-        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        className="absolute inset-0 opacity-[0.02] pointer-events-none hidden md:block"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255,95,31,0.3) 1px, transparent 1px),
@@ -212,7 +212,7 @@ export default function Forge({ showTitle = true }) {
         }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
 
         {/* Hero Header */}
         {showTitle && (
@@ -232,7 +232,7 @@ export default function Forge({ showTitle = true }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="hero-title text-5xl md:text-7xl lg:text-8xl mb-6"
+              className="hero-title text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6"
             >
               The Forge
             </motion.h2>
@@ -260,7 +260,7 @@ export default function Forge({ showTitle = true }) {
               className="relative"
             >
               {/* Category Header - UNIFIED ORANGE THEME */}
-              <div className="flex items-center gap-6 mb-10">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-10">
                 {/* Icon */}
                 <div className="p-4 rounded-xl border transition-all duration-500 bg-accent/10 border-accent/50 text-accent">
                   {CategoryIcons[category.id]()}
@@ -268,8 +268,8 @@ export default function Forge({ showTitle = true }) {
 
                 {/* Title & Description */}
                 <div className="flex-1">
-                  <div className="flex items-baseline gap-3 mb-1">
-                    <h3 className="text-3xl md:text-4xl font-heading text-white">
+                  <div className="flex items-baseline gap-3 mb-1 flex-wrap">
+                    <h3 className="text-2xl md:text-4xl font-heading text-white">
                       {category.name}
                     </h3>
                     <span className="text-text-secondary font-body text-sm tracking-wider uppercase">
@@ -296,7 +296,7 @@ export default function Forge({ showTitle = true }) {
                     <motion.div
                       key={service.id}
                       variants={cardVariants}
-                      className="group relative h-[320px] rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-white/5 cursor-pointer"
+                      className="group relative h-[260px] md:h-[320px] rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-white/5 cursor-pointer"
                     >
                       {/* --- Simplified Hover Background (Single fade, 20% opacity) --- */}
                       <div className="absolute inset-0 bg-[#FF5F1F] opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-20 z-0" />

@@ -48,7 +48,7 @@ function AnimatedText() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
-        className="hero-title font-heading tracking-wider text-5xl md:text-7xl lg:text-8xl text-center"
+        className="hero-title font-heading tracking-wider text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-center"
       >
         {Slogans[index]}
       </motion.h1>
@@ -72,7 +72,7 @@ export default function Hero() {
       </div>
 
       {/* UI Content */}
-      <div className="relative z-10 h-full flex flex-col justify-center items-center p-4">
+      <div className="relative z-10 h-full flex flex-col justify-center items-center px-4">
         <AnimatedText />
         <motion.p
           initial={{ opacity: 0 }}

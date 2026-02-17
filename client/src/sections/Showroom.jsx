@@ -55,7 +55,7 @@ const DisplayCase = ({ item, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative w-full h-[450px] overflow-hidden rounded-xl bg-[#050505] border border-white/5 cursor-pointer"
+      className="group relative w-full h-[320px] md:h-[450px] overflow-hidden rounded-xl bg-[#050505] border border-white/5 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -77,7 +77,7 @@ const DisplayCase = ({ item, index }) => {
       />
 
       {/* 3. THE INFO PLACARD */}
-      <div className="absolute inset-0 p-8 flex flex-col justify-between">
+      <div className="absolute inset-0 p-5 md:p-8 flex flex-col justify-between">
 
         {/* Top Row: Identification */}
         <div className="flex justify-between items-start">
@@ -113,7 +113,7 @@ const DisplayCase = ({ item, index }) => {
           </span>
 
           {/* Title */}
-          <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+          <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4 tracking-tight">
             {title}
           </h3>
 
@@ -193,20 +193,20 @@ export default function Showroom() {
   };
 
   return (
-    <section className="py-32 bg-black relative border-b border-white/5">
+    <section className="py-16 md:py-32 bg-black relative border-b border-white/5">
 
       {/* Background Ambience */}
-      <div className="absolute inset-0 opacity-[0.02]"
+      <div className="absolute inset-0 opacity-[0.02] hidden md:block"
         style={{
           backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)',
           backgroundSize: '24px 24px'
         }}
       />
 
-      <div className="container mx-auto px-6 max-w-6xl relative z-10">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl relative z-10">
 
         {/* HEADER */}
-        <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="mb-12 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

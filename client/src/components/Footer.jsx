@@ -9,27 +9,27 @@ export default function Footer() {
    const isApplyPage = location.pathname === '/join' || location.pathname === '/apply';
 
    return (
-      <footer className="bg-black border-t border-white/5 pt-20 pb-10 relative overflow-hidden">
+      <footer className="bg-black border-t border-white/5 pt-12 md:pt-20 pb-10 relative overflow-hidden">
 
          {/* Background Texture */}
-         <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+         <div className="absolute inset-0 opacity-[0.03] pointer-events-none hidden md:block"
             style={{
                backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
                backgroundSize: '40px 40px'
             }}
          />
 
-         <div className="container mx-auto px-6 max-w-6xl relative z-10">
+         <div className="container mx-auto px-4 md:px-6 max-w-6xl relative z-10">
 
             {/* 1. TOP SECTION: GIANT CTA */}
             {!isApplyPage && (
-               <div className="mb-20 pb-20 border-b border-white/5">
+               <div className="mb-12 md:mb-20 pb-12 md:pb-20 border-b border-white/5">
                   <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
                      <div className="max-w-2xl">
                         <span className="font-mono text-xs text-accent tracking-[0.3em] uppercase mb-4 block">
                            Initiate Sequence
                         </span>
-                        <h2 className="text-5xl md:text-8xl font-heading font-bold text-white tracking-tighter leading-[0.9]">
+                        <h2 className="text-3xl sm:text-5xl md:text-8xl font-heading font-bold text-white tracking-tighter leading-[0.9]">
                            READY TO <br />
                            <span className="text-white/40 group-hover:text-white transition-colors">FORGE?</span>
                         </h2>
@@ -50,10 +50,10 @@ export default function Footer() {
             )}
 
             {/* 2. MIDDLE SECTION: LINKS GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
+            <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-12 mb-12 md:mb-20">
 
                {/* Column 1: Brand (Span 4) */}
-               <div className="md:col-span-4">
+               <div className="col-span-2 md:col-span-4">
 
                   {/* --- EXACT LOGO MATCH FROM HEADER --- */}
                   <div className="mb-6">

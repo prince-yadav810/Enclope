@@ -20,7 +20,7 @@ export default function JoinUs() {
     <div className="fixed inset-0 z-[100] w-full min-h-screen bg-black text-white flex flex-col overflow-y-auto">
 
       {/* Background Texture - Fixed Position so it stays while scrolling */}
-      <div className="fixed inset-0 opacity-[0.03] pointer-events-none"
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none hidden md:block"
         style={{
           backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
           backgroundSize: '40px 40px'
