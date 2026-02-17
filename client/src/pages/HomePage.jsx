@@ -22,6 +22,12 @@ export default function HomePage() {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      // Lenis sets overflow:hidden on html/body and uses CSS transforms for scrolling.
+      // Its destroy() doesn't always restore these during React's async cleanup,
+      // causing the next page to render "blank" (content hidden by overflow:hidden).
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, 0);
     };
   }, []);
 

@@ -9,10 +9,6 @@ export default function Header() {
   // Hook from react-router-dom to get the current URL path
   const location = useLocation();
 
-  // Hide header on full-screen pages that have their own navigation
-  const isApplyPage = location.pathname === '/join' || location.pathname === '/apply';
-  if (isApplyPage) return null;
-
   // Effect to add a scroll listener when the component mounts
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +20,11 @@ export default function Header() {
     // Clean up the listener when the component unmounts
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Hide header on full-screen pages that have their own navigation
+  // IMPORTANT: This must be AFTER all hooks to comply with React's rules of hooks
+  const isApplyPage = location.pathname === '/join' || location.pathname === '/apply';
+  if (isApplyPage) return null;
 
   // Function to handle navigation clicks, primarily for closing the mobile menu
   const handleNavClick = () => {

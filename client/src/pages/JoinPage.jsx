@@ -17,7 +17,7 @@ export default function JoinUs() {
   return (
     // FIX: Changed from 'fixed' to 'absolute' to ensure natural scrolling
     // Added 'min-h-screen' and 'bg-black' to cover everything
-    <div className="absolute inset-0 z-[100] w-full min-h-screen bg-black text-white flex flex-col">
+    <div className="fixed inset-0 z-[100] w-full min-h-screen bg-black text-white flex flex-col overflow-y-auto">
 
       {/* Background Texture - Fixed Position so it stays while scrolling */}
       <div className="fixed inset-0 opacity-[0.03] pointer-events-none"
